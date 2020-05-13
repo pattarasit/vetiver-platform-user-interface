@@ -79,8 +79,7 @@ export default {
   },
   methods:{
     checkLogin(){
-      let authorized = this.$cookie.get("logon")
-      if(!authorized)
+      if(!this.$cookies.isKey("logon"))
         this.$router.push("/login")
     }
   },

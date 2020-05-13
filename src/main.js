@@ -8,7 +8,7 @@ import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App'
 import router from './router'
-import VueCookie from 'vue-cookie';
+import VueCookie from 'vue-cookies';
 // todo
 // cssVars()
 

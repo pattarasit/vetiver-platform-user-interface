@@ -19,7 +19,8 @@
                       type="text"
                       class="form-control"
                       placeholder="Username"
-                      autocomplete="username email"
+                      autocomplete="username"
+                      v-model="username"
                     />
                   </b-input-group>
                   <b-input-group class="mb-4">
@@ -33,6 +34,7 @@
                       class="form-control"
                       placeholder="Password"
                       autocomplete="current-password"
+                      v-model="password"
                     />
                   </b-input-group>
                   <b-row>
@@ -63,12 +65,59 @@
 </template>
 
 <script>
+import api from "../../apiConnector";
+
 export default {
   name: "Login",
+  data() {
+    return {
+      username: null,
+      password: null
+    };
+  },
   methods: {
-    Login() {
-      this.$cookie.set("logon", 1, { expires: '4h' })
-      this.$router.push("/home")
+    async Login() {
+      await api
+        .post(
+          "/permit/getAuthenticate",
+          {
+            username: this.username,
+            password: this.password
+          },
+          {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json"
+          }
+        )
+        .then(result => {
+          var data = result.data
+
+          var expireTime = null;
+
+          switch (data.expireType){
+            case "min":
+                expireTime = data.expire+"MIN"
+                break;
+            case "hr":
+                expireTime = data.expire+"h";
+                break;
+            default:
+                expireTime = data.expire+"s"
+                break;
+        }
+
+          // Set cookies
+          this.$cookies.set("token",data.token,expireTime);
+          this.$cookies.set("logonType",data.type,expireTime);
+          this.$cookies.set("username",data.username,expireTime);
+          this.$cookies.set("logon",data.logon,expireTime);
+          this.$cookies.set("roles",data.roles[0],expireTime);
+
+          this.$router.push("/home")
+        })
+        .catch(err => alert(err));
+
+      //this.$router.push("/home")
     }
   }
 };
