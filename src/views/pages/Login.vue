@@ -6,21 +6,22 @@
           <b-card-group>
             <b-card no-body class="p-4">
               <b-card-body>
-                <b-form>
-                  <h1>Login</h1>
-                  <p class="text-muted">Sign In to your account</p>
+                <b-form v-on:keyup.enter="Login">
+                  <h1>เข้าสู่ระบบ</h1>
+                  <p class="text-muted">กรอกเบอร์โทรศัพท์และรหัสผ่านของคุณ</p>
                   <b-input-group class="mb-3">
                     <b-input-group-prepend>
                       <b-input-group-text>
-                        <i class="icon-user"></i>
+                        <i class="fa fa-mobile"></i>
                       </b-input-group-text>
                     </b-input-group-prepend>
                     <b-form-input
                       type="text"
                       class="form-control"
-                      placeholder="Username"
+                      placeholder="เบอร์โทรศัพท์"
                       autocomplete="username"
                       v-model="username"
+                      maxlength="10"
                     />
                   </b-input-group>
                   <b-input-group class="mb-4">
@@ -32,17 +33,40 @@
                     <b-form-input
                       type="password"
                       class="form-control"
-                      placeholder="Password"
+                      placeholder="รหัสผ่าน"
                       autocomplete="current-password"
                       v-model="password"
                     />
                   </b-input-group>
                   <b-row>
                     <b-col cols="6">
-                      <b-button variant="primary" class="px-4" @click="this.Login">Login</b-button>
+                      <b-button variant="primary" class="px-3" @click="this.Login">เข้าใช้งาน</b-button>
                     </b-col>
                     <b-col cols="6" class="text-right">
-                      <b-button variant="link" class="px-0">Forgot password?</b-button>
+                      <b-button variant="link" to="forget" class="px-0">ลืมรหัสผ่าน</b-button>
+                    </b-col>
+                    <b-col cols="12" class="d-sm-block d-lg-none mt-3 text-center">
+                      <b-button
+                        variant="primary"
+                        class="active px-2 mr-1 d-md-block d-none d-lg-none"
+                        to="register"
+                      >สมัครเพื่อเข้าใช้งาน</b-button>
+                      <b-button
+                        variant="primary"
+                        class="active px-2 d-md-block mt-1 d-none d-lg-none"
+                        to="register-with-farm"
+                      >สมัครเพื่อเข้าใช้งาน ด้วยรหัสฟาร์ม</b-button>
+
+                      <b-button
+                        variant="primary"
+                        class="active px-2 mr-1 d-sm-block d-md-none d-lg-none"
+                        to="register"
+                      >สมัครเพื่อเข้าใช้งาน</b-button>
+                      <b-button
+                        variant="primary"
+                        class="active px-2 d-sm-block mt-1 d-md-none d-lg-none"
+                        to="register-with-farm"
+                      >สมัครเพื่อเข้าใช้งาน ด้วยรหัสฟาร์ม</b-button>
                     </b-col>
                   </b-row>
                 </b-form>
@@ -51,14 +75,36 @@
             <b-card no-body class="text-white bg-primary py-5 d-md-down-none" style="width:44%">
               <b-card-body class="text-center">
                 <div>
-                  <h2>Sign up</h2>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                  <b-button variant="primary" class="active mt-3">Register Now!</b-button>
+                  <h2>หากคุณยังไม่เป็นสมาชิก</h2>
+                  <p>สามารถสมัครสมาชิกเพื่อใช้งานระบบได้โดยการคลิกที่ปุ่มด้านล่างนี้</p>
+                  <b-button
+                    variant="primary"
+                    class="active mt-3"
+                    to="register"
+                  >สมัครเพื่อเข้าใช้งาน!</b-button>
+                  <p
+                    class="mt-5"
+                  >หากคุณต้องการสมัครโดยมีฟาร์มของคุณอยู่ในระบบอยู่แล้วให้คลิกที่ปุ่มด้านล่างนี้</p>
+                  <b-button
+                    variant="primary"
+                    class="active"
+                    to="register-with-farm"
+                  >สมัครเพื่อเข้าใช้งาน ด้วยรหัสฟาร์ม</b-button>
                 </div>
               </b-card-body>
             </b-card>
           </b-card-group>
+
+                  <b-alert
+          :show="saveStatus.popup.showAlert"
+          dismissible
+          fade
+          :variant="saveStatus.popup.variant"
+          class="position-fixed fixed-top pt-4 pb-3 text-center m-0 rounded-0"
+          style="z-index: 2000;"
+        ><h4>{{this.saveStatus.popup.message}}</h4></b-alert>
         </b-col>
+
       </b-row>
     </div>
   </div>
@@ -72,7 +118,14 @@ export default {
   data() {
     return {
       username: null,
-      password: null
+      password: null,
+      saveStatus: {
+        popup: {
+          showAlert: false,
+          variant: "danger",
+          message: ""
+        }
+      }
     };
   },
   methods: {
@@ -90,35 +143,47 @@ export default {
           }
         )
         .then(result => {
-          var data = result.data
+          var data = result.data;
 
           var expireTime = null;
 
-          switch (data.expireType){
+          switch (data.expireType) {
             case "min":
-                expireTime = data.expire+"MIN"
-                break;
+              expireTime = data.expire + "MIN";
+              break;
             case "hr":
-                expireTime = data.expire+"h";
-                break;
+              expireTime = data.expire + "h";
+              break;
             default:
-                expireTime = data.expire+"s"
-                break;
-        }
+              expireTime = data.expire + "s";
+              break;
+          }
 
           // Set cookies
-          this.$cookies.set("token",data.token,expireTime);
-          this.$cookies.set("logonType",data.type,expireTime);
-          this.$cookies.set("username",data.username,expireTime);
-          this.$cookies.set("logon",data.logon,expireTime);
-          this.$cookies.set("roles",data.roles[0],expireTime);
+          this.$cookies.set("token", data.token, expireTime);
+          this.$cookies.set("logonType", data.type, expireTime);
+          this.$cookies.set("username", data.username, expireTime);
+          this.$cookies.set("logon", data.logon, expireTime);
+          this.$cookies.set("roles", data.roles[0], expireTime);
 
-          this.$router.push("/home")
+          this.$router.push("/dashboard");
         })
-        .catch(err => alert(err));
-
-      //this.$router.push("/home")
+        .catch(err => {
+          this.saveStatus.popup.showAlert = true;
+          setTimeout(() => {
+            this.saveStatus.popup.showAlert = false;
+          }, 3000);
+          this.saveStatus.popup.variant = "danger";
+          this.saveStatus.popup.message =
+            "การเข้าสู่ระบบล้มเหลว";
+        });
+    },
+    checkLogin() {
+      if (this.$cookies.isKey("logon")) this.$router.push("/dashboard");
     }
+  },
+  mounted() {
+    this.checkLogin();
   }
 };
 </script>

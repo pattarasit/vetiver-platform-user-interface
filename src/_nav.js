@@ -20,12 +20,12 @@ export default {
       children:[
         {
           name: 'ตรวจสอบค่าแบบเฉลี่ย',
-          url: '/home/avg',
+          url: '/dashboard/npk/avg',
           icon: 'icon-globe-alt'
         },
         {
           name: 'ตรวจสอบค่าแบบเจาะจง',
-          url: '/home/specific',
+          url: '/dashboard/npk/specific',
           icon: 'icon-globe-alt'
         }
       ]
@@ -45,17 +45,17 @@ export default {
       children:[
         {
           name: 'เพิ่มฟาร์ม',
-          url: '/home/add',
+          url: '/dashboard/farm/add',
           icon: 'icon-plus'
         },
         {
           name: 'ลบฟาร์ม',
-          url: '/home/del',
+          url: '/dashboard/farm/del',
           icon: 'icon-trash'
         },
         {
           name: 'จัดการแปลงของฟาร์ม',
-          url: '/home/plot',
+          url: '/dashboard/farm/plot',
           icon: 'icon-grid'
         }
       ]
@@ -75,17 +75,17 @@ export default {
       children:[
         {
           name: 'เพิ่มตัวจัดการอุปกรณ์',
-          url: '/home/add',
+          url: '/dashboard/dm/add',
           icon: 'icon-plus'
         },
         {
           name: 'ลบตัวจัดการอุปกรณ์',
-          url: '/home/del',
+          url: '/dashboard/dm/del',
           icon: 'icon-trash'
         },
         {
           name: 'จัดการอุปกรณ์',
-          url: '/home/device',
+          url: '/dashboard/dm/device',
           icon: 'icon-grid'
         }
       ]

@@ -9,11 +9,21 @@ import BootstrapVue from 'bootstrap-vue'
 import App from './App'
 import router from './router'
 import VueCookie from 'vue-cookies';
-// todo
-// cssVars()
+import Cleave from 'cleave.js';
 
 Vue.use(VueCookie);
 Vue.use(BootstrapVue)
+
+Vue.directive("cleave", {
+  inserted: (el, binding) => {
+    el.cleave = new Cleave(el, binding.value || {});
+  },
+  update: el => {
+    el.value = el.cleave.properties.result;
+    const event = new Event("b-input", { bubbles: true });
+    el.dispatchEvent(event);
+  }
+});
 
 /* eslint-disable no-new */
 new Vue({

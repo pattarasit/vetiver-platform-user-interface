@@ -42,7 +42,7 @@
     <TheFooter>
       <!--footer-->
       <div>
-        <span class="ml-1">&copy; 2020 เกษตรก้าวหน้า</span>
+        <span class="ml-1">&copy; {{this.years}} เกษตรก้าวหน้า</span>
       </div>
       <div class="ml-auto">
         <span class="mr-1">Based on Vetiver-Platform</span>
@@ -74,13 +74,18 @@ export default {
   },
   data () {
     return {
-      nav: nav.items
+      nav: nav.items,
+      years: null
     }
   },
   methods:{
     checkLogin(){
       if(!this.$cookies.isKey("logon"))
         this.$router.push("/login")
+    },
+    getYears(){
+      var date = new Date()
+      this.years = date.getFullYear()
     }
   },
   computed: {
@@ -93,7 +98,7 @@ export default {
   },
   mounted(){
     this.checkLogin()
-
+    this.getYears()
   }
 }
 </script>

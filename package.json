@@ -27,6 +27,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "2.0.0-rc.24",
     "chart.js": "^2.8.0",
+    "cleave.js": "^1.5.10",
     "core-js": "^2.6.9",
     "css-vars-ponyfill": "^2.0.2",
     "flag-icon-css": "^3.3.0",
@@ -36,8 +37,11 @@
     "vue": "^2.6.10",
     "vue-chartjs": "^3.4.2",
     "vue-cookies": "^1.7.0",
+    "vue-form-wizard": "^0.8.4",
     "vue-perfect-scrollbar": "^0.1.0",
-    "vue-router": "^3.0.6"
+    "vue-property-decorator": "^8.4.2",
+    "vue-router": "^3.0.6",
+    "vue-thailand-address-autocomplete": "^0.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",

@@ -19,34 +19,18 @@
                 <b-form>
                   <b-input-group class="mb-3">
                     <b-input-group-prepend>
-                      <b-input-group-text>
-                        <i class="fa fa-user"></i>
-                      </b-input-group-text>
+                      <b-input-group-text>FARM-</b-input-group-text>
                     </b-input-group-prepend>
                     <b-form-input
                       id="farmName"
                       type="text"
-                      v-model="Farm.farmName"
+                      v-model="Farm.farmCode"
                       class="form-control"
-                      placeholder="ชื่อฟาร์ม"
-                    />
-                  </b-input-group>
-
-                  <b-input-group class="mb-3">
-                    <b-input-group-prepend>
-                      <b-input-group-text>
-                        <i class="icon-lock"></i>
-                      </b-input-group-text>
-                    </b-input-group-prepend>
-                    <b-form-input
-                      type="text"
-                      id="license"
-                      class="form-control"
-                      placeholder="License"
-                      v-model="Farm.license"
+                      placeholder="โค๊ดฟาร์ม"
+                      @change="this.getFarm"
                       v-cleave="{
                             delimiter: '-',
-                            blocks: [3, 3, 3],
+                            blocks: [8, 8],
                       }"
                     />
                   </b-input-group>
@@ -206,15 +190,22 @@
                   <b-form-invalid-feedback id="input-live-feedback"></b-form-invalid-feedback>
                 </b-form>
               </tab-content>
+
               <tab-content title="ตรวจสอบข้อมูล">
-                <p>
-                  <b>ชื่อฟาร์ม:</b>
-                  {{ this.Farm.farmName }}
-                </p>
-                <p>
-                  <b>License:</b>
-                  {{ this.Farm.license }}
-                </p>
+                <div v-if="checkFarmIsNotNull">
+                  <p>
+                    <b>ชื่อฟาร์ม:</b>
+                    {{ this.Farm.details.farmName }}
+                  </p>
+                  <p>
+                    <b>ฟาร์มโค๊ด:</b>
+                    {{ this.Farm.details.farmCode }}
+                  </p>
+                  <p>
+                    <b>License:</b>
+                    {{ this.Farm.details.licenseCode }}
+                  </p>
+                </div>
                 <hr />
                 <p>
                   <b>ชื่อ - สุกล:</b>
@@ -228,9 +219,7 @@
                   <b>Email:</b>
                   {{ this.MemberAccount.email }}
                 </p>
-
                 <hr />
-
                 <p class="text-center">
                   <b>ที่อยู่</b>
                 </p>
@@ -269,17 +258,18 @@
               <b-button variant="link" class="active mt-3" to="/">คลิกที่นี่เพื่อกลับหน้าหลัก!</b-button>
             </b-col>
           </b-card>
+
+          <b-alert
+            class="position-fixed fixed-top pt-4 pb-3 text-center m-0 rounded-0"
+            style="z-index: 2000;"
+            :show="saveStatus.popup.showAlert"
+            dismissible
+            fade
+            :variant="saveStatus.popup.variant"
+          >
+            <h4>{{this.saveStatus.popup.message}}</h4>
+          </b-alert>
         </b-col>
-        <b-alert
-          class="position-fixed fixed-top pt-4 pb-3 text-center m-0 rounded-0"
-          style="z-index: 2000;"
-          :show="saveStatus.popup.showAlert"
-          dismissible
-          fade
-          :variant="saveStatus.popup.variant"
-        >
-          <h4>{{this.saveStatus.popup.message}}</h4>
-        </b-alert>
       </b-row>
     </div>
   </div>
@@ -301,8 +291,8 @@ export default {
   data() {
     return {
       Farm: {
-        farmName: null,
-        license: null
+        farmCode: null,
+        details: null
       },
       MemberAccount: {
         fullName: null,
@@ -334,6 +324,10 @@ export default {
     };
   },
   computed: {
+    checkFarmIsNotNull() {
+      if (this.Farm.details === null) return false;
+      else return true;
+    },
     checkMatchPasswd() {
       if (
         this.MemberAccount.newPasswd === null &&
@@ -411,7 +405,6 @@ export default {
           })
           .then(result => {
             this.Valid.tel = false;
-            this.Valid.tel = false;
             this.saveStatus.popup.showAlert = true;
             setTimeout(() => {
               this.saveStatus.popup.showAlert = false;
@@ -484,99 +477,79 @@ export default {
         this.saveStatus.popup.message = "กรุณากรอก email!";
       } else {
         this.$bvModal.msgBoxConfirm("ยืนยันข้อมูล").then(value => {
-          if (value === true) {
+          if (value === true && this.Farm.details !== null) {
             this.Register();
+          } else {
+            this.saveStatus.popup.showAlert = true;
+            setTimeout(() => {
+              this.saveStatus.popup.showAlert = false;
+            }, 3000);
+            this.saveStatus.popup.variant = "danger";
+            this.saveStatus.popup.message = "ไม่พบข้อมูลฟาร์ม";
           }
         });
       }
     },
 
-    Register() {
-      var farmId = null;
+    getFarm() {
       api
-        .post(
-          "/permit/addFarm",
-          {
-            farmName: this.Farm.farmName,
-            license: this.Farm.license
-          },
-          {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
-          }
-        )
+        .get("/permit/getFarmByCode/FARM-" + this.Farm.farmCode, {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json"
+        })
         .then(result => {
-          farmId = result.data.id;
-
-          api
-            .post(
-              "/permit/addMemberAccount",
-              {
-                farmId: farmId,
-                fullName: this.MemberAccount.fullName,
-                subDistrict: this.MemberAccount.address.subdistrict,
-                district: this.MemberAccount.address.district,
-                province: this.MemberAccount.address.province,
-                zipcode: this.MemberAccount.address.zipcode,
-                addressOther: this.MemberAccount.address.other,
-                email: this.MemberAccount.email,
-                tel: this.MemberAccount.tel,
-                password: this.MemberAccount.newPasswd
-              },
-              {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-              }
-            )
-            .then(result => {
-              this.saveStatus.popup.showAlert = true;
-              setTimeout(() => {
-                this.saveStatus.popup.showAlert = false;
-                this.Login();
-              }, 3000);
-              this.saveStatus.popup.variant = "success";
-              this.saveStatus.popup.message = "สมัครใช้งานสำเร็จ";
-            })
-            .catch(err => {
-              this.saveStatus.popup.showAlert = true;
-              setTimeout(() => {
-                this.saveStatus.popup.showAlert = false;
-              }, 3000);
-              this.saveStatus.popup.variant = "danger";
-              this.saveStatus.popup.message = "สมัครใช้งานไม่สำเร็จ";
-
-              api
-                .delete(
-                  "/permit/deleteFarm",
-                  {
-                    farmId: farmId
-                  },
-                  {
-                    "Access-Control-Allow-Origin": "*",
-                    "Content-Type": "application/json"
-                  }
-                )
-                .then(result => {
-                  if (result.data == "SUCCESS") {
-                    this.saveStatus.popup.showAlert = true;
-                    setTimeout(() => {
-                      this.saveStatus.popup.showAlert = false;
-                    }, 3000);
-                    this.saveStatus.popup.variant = "danger";
-                    this.saveStatus.popup.message = "เคลียร์ข้อมูลสำเร็จ";
-                  }
-                });
-            });
+          this.Farm.details = result.data;
         })
         .catch(error => {
           this.saveStatus.popup.showAlert = true;
           setTimeout(() => {
             this.saveStatus.popup.showAlert = false;
-            this.Login();
           }, 3000);
           this.saveStatus.popup.variant = "danger";
-          this.saveStatus.popup.message = "ไม่สามารถเพิ่มฟาร์มได้";
+          this.saveStatus.popup.message = "ไม่พบฟาร์ม";
         });
+    },
+
+    Register() {
+      if (this.Farm.details !== null) {
+        api
+          .post(
+            "/permit/addMemberAccount",
+            {
+              farmId: this.Farm.details.farmId,
+              fullName: this.MemberAccount.fullName,
+              subDistrict: this.MemberAccount.address.subdistrict,
+              district: this.MemberAccount.address.district,
+              province: this.MemberAccount.address.province,
+              zipcode: this.MemberAccount.address.zipcode,
+              addressOther: this.MemberAccount.address.other,
+              email: this.MemberAccount.email,
+              tel: this.MemberAccount.tel,
+              password: this.MemberAccount.newPasswd
+            },
+            {
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json"
+            }
+          )
+          .then(result => {
+            this.saveStatus.popup.showAlert = true;
+            setTimeout(() => {
+              this.saveStatus.popup.showAlert = false;
+              this.Login();
+            }, 3000);
+            this.saveStatus.popup.variant = "success";
+            this.saveStatus.popup.message = "สมัครใช้งานสำเร็จ";
+          })
+          .catch(err => {
+            this.saveStatus.popup.showAlert = true;
+            setTimeout(() => {
+              this.saveStatus.popup.showAlert = false;
+            }, 3000);
+            this.saveStatus.popup.variant = "danger";
+            this.saveStatus.popup.message = "สมัครใช้งานไม่สำเร็จ";
+          });
+      }
     },
     async Login() {
       await api
@@ -618,12 +591,9 @@ export default {
           this.$router.push("/dashboard");
         })
         .catch(err => alert(err));
+
+      //this.$router.push("/home")
     }
   }
 };
 </script>
-<style>
-.fsize ::placeholder {
-  font-size: 14px;
-}
-</style>
