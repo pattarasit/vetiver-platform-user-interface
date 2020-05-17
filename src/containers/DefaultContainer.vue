@@ -2,7 +2,7 @@
   <div class="app">
     <AppHeader fixed>
       <SidebarToggler class="d-lg-none" display="md" mobile />
-      <b-link class="navbar-brand" to="/">
+      <b-link class="navbar-brand" to="/dashboard">
         <img
           class="navbar-brand-full"
           src="../assets/images/logo2.png"
@@ -41,11 +41,8 @@
     </div>
     <TheFooter>
       <!--footer-->
-      <div>
-        <span class="ml-1">&copy; {{this.years}} เกษตรก้าวหน้า</span>
-      </div>
-      <div class="ml-auto">
-        <span class="mr-1">Based on Vetiver-Platform</span>
+      <div class="mx-auto">
+        <span>&copy; {{this.years}} เกษตรก้าวหน้า || Based on Vetiver-Platform</span>
       </div>
     </TheFooter>
   </div>

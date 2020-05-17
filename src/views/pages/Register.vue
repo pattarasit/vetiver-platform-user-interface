@@ -270,16 +270,6 @@
             </b-col>
           </b-card>
         </b-col>
-        <b-alert
-          class="position-fixed fixed-top pt-4 pb-3 text-center m-0 rounded-0"
-          style="z-index: 2000;"
-          :show="saveStatus.popup.showAlert"
-          dismissible
-          fade
-          :variant="saveStatus.popup.variant"
-        >
-          <h4>{{this.saveStatus.popup.message}}</h4>
-        </b-alert>
       </b-row>
     </div>
   </div>
@@ -323,13 +313,6 @@ export default {
         email: null,
         telFormat: null,
         emailFormat: null
-      },
-      saveStatus: {
-        popup: {
-          showAlert: false,
-          variant: "danger",
-          message: ""
-        }
       }
     };
   },
@@ -343,9 +326,6 @@ export default {
 
       return this.MemberAccount.newPasswd == this.MemberAccount.rePasswd;
     },
-    checkNotNullFarmSize() {
-      return this.Farm.farmSize !== null;
-    },
     checkNotNullEmail() {
       return this.MemberAccount.email !== null;
     },
@@ -358,13 +338,12 @@ export default {
         } else if (result == null && this.MemberAccount.tel.length == 10) {
           this.Valid.telFormat = false;
           this.Valid.tel = false;
-          this.saveStatus.popup.showAlert = true;
-          setTimeout(() => {
-            this.saveStatus.popup.showAlert = false;
-          }, 3000);
-          this.saveStatus.popup.variant = "warning";
-          this.saveStatus.popup.message =
-            "รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง ตัวอย่างรูปแบบ 06xxxxxxxx 08xxxxxxxx 09xxxxxxxx";
+
+          this.$root.getAlertBox(
+            "warning",
+            "รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง ตัวอย่างรูปแบบ 06xxxxxxxx 08xxxxxxxx 09xxxxxxxx",
+            3
+          );
         }
       }
 
@@ -392,13 +371,11 @@ export default {
         } else if (result == null) {
           this.Valid.emailFormat = false;
           this.Valid.email = false;
-          this.saveStatus.popup.showAlert = true;
-          setTimeout(() => {
-            this.saveStatus.popup.showAlert = false;
-          }, 3000);
-          this.saveStatus.popup.variant = "warning";
-          this.saveStatus.popup.message =
-            "รูปแบบ Email ไม่ถูกต้อง ตัวอย่างรูปแบบ ABC@domain.xxx ";
+          this.$root.getAlertBox(
+            "warning",
+            "รูปแบบ Email ไม่ถูกต้อง ตัวอย่างรูปแบบ ABC@domain.xxx",
+            3
+          );
         }
       }
     },
@@ -412,12 +389,11 @@ export default {
           .then(result => {
             this.Valid.tel = false;
             this.Valid.tel = false;
-            this.saveStatus.popup.showAlert = true;
-            setTimeout(() => {
-              this.saveStatus.popup.showAlert = false;
-            }, 3000);
-            this.saveStatus.popup.variant = "warning";
-            this.saveStatus.popup.message = "เบอร์โทรศัพท์นี้ลงทะเบียนแล้ว";
+            this.$root.getAlertBox(
+              "danger",
+              "เบอร์โทรศัพท์นี้ลงทะเบียนแล้ว",
+              3
+            );
           })
           .catch(err => {
             this.Valid.tel = true;
@@ -425,12 +401,11 @@ export default {
       } else if (this.MemberAccount.tel.length != 10) {
         this.Valid.telFormat = false;
         this.Valid.tel = false;
-        this.saveStatus.popup.showAlert = true;
-        setTimeout(() => {
-          this.saveStatus.popup.showAlert = false;
-        }, 3000);
-        this.saveStatus.popup.variant = "warning";
-        this.saveStatus.popup.message = "กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก";
+        this.$root.getAlertBox(
+          "warning",
+          "กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก",
+          3
+        );
       }
     },
 
@@ -440,13 +415,11 @@ export default {
         this.Valid.email === false ||
         this.MemberAccount.newPasswd != this.MemberAccount.rePasswd
       ) {
-        this.saveStatus.popup.showAlert = true;
-        setTimeout(() => {
-          this.saveStatus.popup.showAlert = false;
-        }, 3000);
-        this.saveStatus.popup.variant = "warning";
-        this.saveStatus.popup.message =
-          "กรุณากรอกรหัสผ่าน - เบอร์โทรศัพท์หรือ Email ให้ถูกต้อง !";
+        this.$root.getAlertBox(
+          "warning",
+          "กรุณากรอกรหัสผ่าน - เบอร์โทรศัพท์หรือ Email ให้ถูกต้อง !",
+          4
+        );
       } else if (
         this.Valid.tel === null ||
         this.Valid.email === null ||
@@ -469,19 +442,9 @@ export default {
         this.MemberAccount.address.province === "" ||
         this.MemberAccount.address.zipcode === ""
       ) {
-        this.saveStatus.popup.showAlert = true;
-        setTimeout(() => {
-          this.saveStatus.popup.showAlert = false;
-        }, 3000);
-        this.saveStatus.popup.variant = "warning";
-        this.saveStatus.popup.message = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        this.$root.getAlertBox("warning", "กรุณากรอกข้อมูลให้ครบถ้วน", 4);
       } else if (this.MemberAccount.email === null) {
-        this.saveStatus.popup.showAlert = true;
-        setTimeout(() => {
-          this.saveStatus.popup.showAlert = false;
-        }, 3000);
-        this.saveStatus.popup.variant = "warning";
-        this.saveStatus.popup.message = "กรุณากรอก email!";
+        this.$root.getAlertBox("warning", "กรุณากรอก email!", 4);
       } else {
         this.$bvModal.msgBoxConfirm("ยืนยันข้อมูล").then(value => {
           if (value === true) {
@@ -529,28 +492,16 @@ export default {
               }
             )
             .then(result => {
-              this.saveStatus.popup.showAlert = true;
-              setTimeout(() => {
-                this.saveStatus.popup.showAlert = false;
-                this.Login();
-              }, 3000);
-              this.saveStatus.popup.variant = "success";
-              this.saveStatus.popup.message = "สมัครใช้งานสำเร็จ";
+              this.$root.getAlertBox("success", "สมัครใช้งานสำเร็จ", 3);
+              this.Login()
             })
             .catch(err => {
-              this.saveStatus.popup.showAlert = true;
-              setTimeout(() => {
-                this.saveStatus.popup.showAlert = false;
-              }, 3000);
-              this.saveStatus.popup.variant = "danger";
-              this.saveStatus.popup.message = "สมัครใช้งานไม่สำเร็จ";
+              this.$root.getAlertBox("danger", "สมัครใช้งานไม่สำเร็จ", 3);
 
               api
                 .delete(
-                  "/permit/deleteFarm",
-                  {
-                    farmId: farmId
-                  },
+                  "/permit/deleteFarm/" + farmId,
+                  {},
                   {
                     "Access-Control-Allow-Origin": "*",
                     "Content-Type": "application/json"
@@ -558,24 +509,17 @@ export default {
                 )
                 .then(result => {
                   if (result.data == "SUCCESS") {
-                    this.saveStatus.popup.showAlert = true;
-                    setTimeout(() => {
-                      this.saveStatus.popup.showAlert = false;
-                    }, 3000);
-                    this.saveStatus.popup.variant = "danger";
-                    this.saveStatus.popup.message = "เคลียร์ข้อมูลสำเร็จ";
+                    this.$root.getAlertBox(
+                      "danger",
+                      "เคลียร์ข้อมูลสำเร็จ",
+                      3
+                    );
                   }
                 });
             });
         })
         .catch(error => {
-          this.saveStatus.popup.showAlert = true;
-          setTimeout(() => {
-            this.saveStatus.popup.showAlert = false;
-            this.Login();
-          }, 3000);
-          this.saveStatus.popup.variant = "danger";
-          this.saveStatus.popup.message = "ไม่สามารถเพิ่มฟาร์มได้";
+          this.$root.getAlertBox("danger", "ไม่สามารถเพิ่มฟาร์มได้", 3);
         });
     },
     async Login() {
@@ -608,14 +552,17 @@ export default {
               break;
           }
 
+          var date = new Date()
+          date.setMinutes( date.getMinutes() + data.expire );
+
           // Set cookies
           this.$cookies.set("token", data.token, expireTime);
           this.$cookies.set("logonType", data.type, expireTime);
           this.$cookies.set("username", data.username, expireTime);
           this.$cookies.set("logon", data.logon, expireTime);
           this.$cookies.set("roles", data.roles[0], expireTime);
-
-          this.$router.push("/dashboard");
+          this.$cookies.set("logonExpire", date.getTime(), expireTime )
+          this.$router.push("/dashboard")
         })
         .catch(err => alert(err));
     }

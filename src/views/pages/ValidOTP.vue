@@ -192,15 +192,11 @@ export default {
           this.$cookies.set("forget", JSON.stringify(this.payload), "5MIN");
           this.$cookies.set("forget_step", 1, "5MIN");
 
+          this.$root.getAlertBox("success", "กรุณาตรวจสอบรหัสยืนยันตัวตนที่ Email ของคุณ", 3);
           this.getTimeout();
         })
         .catch(err => {
-          this.saveStatus.popup.showAlert = true;
-          setTimeout(() => {
-            this.saveStatus.popup.showAlert = false;
-          }, 3000);
-          this.saveStatus.popup.variant = "danger";
-          this.saveStatus.popup.message = "ไม่พบเบอร์บัญชีผู้ใช้ของคุณ";
+          this.$root.getAlertBox("danger", "ไม่พบเบอร์บัญชีผู้ใช้ของคุณ", 3);
         });
     },
     async Valid() {

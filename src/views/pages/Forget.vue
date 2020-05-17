@@ -45,16 +45,6 @@
             </b-card>
           </b-card-group>
         </b-col>
-        <b-alert
-          :show="saveStatus.popup.showAlert"
-          dismissible
-          fade
-          :variant="saveStatus.popup.variant"
-          class="position-fixed fixed-top pt-4 pb-3 text-center m-0 rounded-0"
-          style="z-index: 2000;"
-        >
-          <h4>{{this.saveStatus.popup.message}}</h4>
-        </b-alert>
       </b-row>
     </div>
   </div>
@@ -67,14 +57,7 @@ export default {
   name: "Forget",
   data() {
     return {
-      tel: null,
-      saveStatus: {
-        popup: {
-          showAlert: false,
-          variant: "danger",
-          message: ""
-        }
-      }
+      tel: null
     };
   },
   methods: {
@@ -106,12 +89,7 @@ export default {
           this.$router.push("/valid-otp");
         })
         .catch(err => {
-          this.saveStatus.popup.showAlert = true;
-          setTimeout(() => {
-            this.saveStatus.popup.showAlert = false;
-          }, 3000);
-          this.saveStatus.popup.variant = "danger";
-          this.saveStatus.popup.message = "ไม่พบเบอร์บัญชีผู้ใช้ของคุณ";
+          this.$root.getAlertBox("danger", "ไม่พบเบอร์บัญชีผู้ใช้ของคุณ", 3);
         });
     }
   }

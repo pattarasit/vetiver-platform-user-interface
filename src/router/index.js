@@ -15,7 +15,7 @@ const RegisterWithFarm = () => import('@/views/pages/RegisterWithFarm')
 const Forget = () => import('@/views/pages/Forget')
 const ValidOTP = () => import('@/views/pages/ValidOTP')
 const ChangePassword = () => import('@/views/pages/ChangePassword')
-
+const EditProfile = () => import('@/views/profile/EditProfile')
 
 Vue.use(Router)
 
@@ -35,7 +35,12 @@ export default new Router({
           path: 'welcome',
           name: 'welcome',
           component: Dashboard
-        }
+        },
+        {
+          path: 'edit-profile',
+          name: 'edit-profile',
+          component: EditProfile
+        },
       ]
     },
     {

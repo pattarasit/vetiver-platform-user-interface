@@ -32,5 +32,37 @@ new Vue({
   template: '<App/>',
   components: {
     App
+  },
+  data() {
+    return {
+      alertBox: {
+        popup: {
+          showAlert: false,
+          variant: "danger",
+          message: ""
+        }
+      }
+    };
+  },
+  methods: {
+    getAlertBox: function(variant, message,delay) {
+      
+      delay *= 1000
+
+      this.alertBox.popup.showAlert = true;
+      setTimeout(() => {
+        this.alertBox.popup.showAlert = false;
+      }, delay);
+      this.alertBox.popup.variant = variant;
+      this.alertBox.popup.message = message;
+    },
+    clearCookieLogon(){
+      this.$cookies.remove("token");
+      this.$cookies.remove("logonType");
+      this.$cookies.remove("username");
+      this.$cookies.remove("logon");
+      this.$cookies.remove("roles");
+      this.$cookies.remove("logonExpire");
+    }
   }
 })

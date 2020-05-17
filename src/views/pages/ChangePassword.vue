@@ -139,6 +139,8 @@ export default {
               .then(result => {
                 var data = result.data;
 
+                this.$root.getAlertBox("success", "เปลี่ยนรหัสผ่านสำเร็จ", 3);
+
                 var expireTime = null;
 
                 switch (data.expireType) {
@@ -163,21 +165,11 @@ export default {
                 this.$router.push("/dashboard");
               })
               .catch(err => {
-                this.saveStatus.popup.showAlert = true;
-                setTimeout(() => {
-                  this.saveStatus.popup.showAlert = false;
-                }, 3000);
-                this.saveStatus.popup.variant = "danger";
-                this.saveStatus.popup.message = "การเข้าสู่ระบบล้มเหลว";
+                this.$root.getAlertBox("danger", "การเข้าสู่ระบบล้มเหลว", 3);
               });
           })
           .catch(err => {
-            this.saveStatus.popup.showAlert = true;
-            setTimeout(() => {
-              this.saveStatus.popup.showAlert = false;
-            }, 3000);
-            this.saveStatus.popup.variant = "danger";
-            this.saveStatus.popup.message = "การเปลี่ยนรหัสผ่านล้มเหลว";
+            this.$root.getAlertBox("danger", "การเปลี่ยนรหัสผ่านล้มเหลว", 3);
           });
       }
     },

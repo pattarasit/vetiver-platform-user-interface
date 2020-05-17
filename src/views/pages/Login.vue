@@ -159,14 +159,17 @@ export default {
               break;
           }
 
+          var date = new Date()
+          date.setMinutes( date.getMinutes() + data.expire );
+
           // Set cookies
           this.$cookies.set("token", data.token, expireTime);
           this.$cookies.set("logonType", data.type, expireTime);
           this.$cookies.set("username", data.username, expireTime);
           this.$cookies.set("logon", data.logon, expireTime);
           this.$cookies.set("roles", data.roles[0], expireTime);
-
-          this.$router.push("/dashboard");
+          this.$cookies.set("logonExpire", date, expireTime )
+          this.$router.push("/dashboard")
         })
         .catch(err => {
           this.saveStatus.popup.showAlert = true;
