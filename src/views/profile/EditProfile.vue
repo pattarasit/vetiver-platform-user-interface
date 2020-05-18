@@ -295,9 +295,10 @@ export default {
         .then(result => {
           this.$root.getAlertBox("success", "เปลี่ยนแปลงข้อมูลสำเร็จ", 3);
           if (this.memberDetails.telNumber != this.$cookies.get("username")) {
+            var v = this
             setTimeout(function() {
-              this.$root.clearCookieLogon();
-              this.$root.push("/login");
+              v.$root.clearCookieLogon();
+              v.$router.push("/login");
             }, 3000);
           }
         })
