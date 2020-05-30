@@ -16,6 +16,9 @@ const Forget = () => import('@/views/pages/Forget')
 const ValidOTP = () => import('@/views/pages/ValidOTP')
 const ChangePassword = () => import('@/views/pages/ChangePassword')
 const EditProfile = () => import('@/views/profile/EditProfile')
+const Homepage = () => import('@/views/pages/Homepage')
+const AboutMe = () => import('@/views/pages/AboutMe')
+const Contact = () => import('@/views/pages/Contact')
 
 Vue.use(Router)
 
@@ -45,7 +48,7 @@ export default new Router({
     },
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/homepage',
       name: 'Pages',
       component: {
         render (c) { return c('router-view') }
@@ -80,6 +83,21 @@ export default new Router({
           path: 'change-password',
           name: 'ChangePassword',
           component: ChangePassword
+        },
+        {
+          path: 'homepage',
+          name: 'Homepage',
+          component: Homepage
+        },
+        {
+          path: 'aboutme',
+          name: 'AboutMe',
+          component: AboutMe
+        },
+        {
+          path: 'contact',
+          name: 'Contact',
+          component: Contact
         }
       ]
     },
